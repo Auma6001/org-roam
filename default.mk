@@ -94,6 +94,7 @@ ifndef ORG_LOAD_PATH
 ORG_LOAD_PATH  = $(LOAD_PATH)
 ORG_LOAD_PATH += -L $(TOP)../ox-texinfo-plus
 ORG_LOAD_PATH += -L $(TOP)../org-mode/contrib/lisp
+ORG_LOAD_PATH += -L $(TOP)../org-mode/lisp
 endif
 
 ## Publish ###########################################################
