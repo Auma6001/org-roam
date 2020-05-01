@@ -229,7 +229,7 @@ additional properties:
 2. =:head=: This is the template that is inserted on initial note
    creation.
 
-*** Org-roam Template Expansion
+** Org-roam Template Expansion
 
 Org-roam's template definitions also extend org-capture's template
 syntax, to allow prefilling of strings. In many scenarios,
@@ -290,7 +290,7 @@ instead of underscores:
 
 This templating system is used throughout org-roam templates.
 
-*** Template examples
+** Template examples
 
 Here I walkthrough the default template, reproduced below.
 
@@ -321,6 +321,7 @@ Here I walkthrough the default template, reproduced below.
    file, rather than narrowing to just the entry.
 
 Other options you may want to learn about include =:immediate-finish=.
+
 * Configuration
 The number of configuration options is deliberately kept small, to keep
 the Org-roam codebase manageable. However, we attempt to accommodate as
