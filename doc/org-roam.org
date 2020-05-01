@@ -104,6 +104,220 @@ Now see [[*Post-Installation Tasks][Post-Installation Tasks]].
 ** TODO Post-Installation Tasks
 
 * TODO Getting Started
+
+Org-roam was built to support a workflow that was not possible with vanilla
+Org-mode. This flow is modelled after the [[https://zettelkasten.de/][Zettelkasten Method]], and many of [[https://roamresearch.com][Roam Research's]] workflows. It is crucial to understand that Org-roam does not
+auto-magically make note-taking better -- it's changing the note-taking workflow
+that does. To understand more about the methods and madness, see [[*Note-taking Workflows][Note-taking Workflows]].
+
+In Org-roam, your notes (or zettels), are stored in individual files, in the
+=org-roam-directory=. For this tutorial, create an empty directory, and set
+=org-roam-directory= accordingly:
+
+#+BEGIN_SRC emacs-lisp
+(make-directory "~/org-roam")
+(setq org-roam-directory "~/org-roam")
+#+END_SRC
+
+Org-roam's entry point is the global minor =org-roam-mode=. This sets up Emacs
+with several hooks, for keeping the org-roam cache consistently updated, as well
+as showing the backlinks buffer.
+
+The cache is a sqlite database named =org-roam.db=, which resides at the root
+=org-roam-directory=. Activating =org-roam-mode= builds the cache, which may take a
+while the first time, but is often instantaneous in subsequent runs. To build
+the cache manually again, run =M-x org-roam-db-build-cache=.
+
+=org-roam-find-file= shows the list of titles for notes that reside in
+=org-roam-directory=. Selecting a note title will bring you to the corresponding
+note. Entering a title of a note that does not yet exist will create a new note
+with that title.
+
+[[file:images/org-roam-find-file.gif]]
+
+Note that in the above image, the [[https://github.com/abo-abo/swiper][Ivy]] completion frontend is used. The default
+frontend has some usability issues with non-matching candidates (e.g. when you
+want to enter a title of a new note, there is no completion candidate), so
+either Ivy or Helm is recommended.
+
+=org-roam-insert= insert links to existing (or new) notes. Entering a non-existent
+title will also create a new note with that title.
+
+[[file:images/org-roam-insert-filetag.gif]]
+
+Good usage of Org-roam requires liberally linking files. This allows
+the build-up of a dense knowledge graph.
+
+The Org-roam buffer is often displayed in the side window. It shows
+backlinks for the currently active Org-roam note, along with some
+surrounding context. To bring up toggle the visibility of this buffer, call =M-x org-roam=.
+
+[[file:images/org-roam-buffer.gif]]
+
+Org-roam also provides graphing capabilities, using Graphviz. It generates
+graphs with notes as nodes, and links between them as edges. The generated graph
+can be used to navigate to the files, but this requires some additional setup (see [[*Roam Protocol][Roam Protocol]]).
+
+[[file:images/org-roam-graph.gif]]
+
+* TODO Anatomy of an Org-roam File
+
+* TODO The Templating System
+
+* Roam Protocol
+** _ :ignore:
+Org-roam extending =org-protocol= with 2 protocols: the =roam-file=
+and =roam-ref= protocol.
+
+** Installation
+
+To enable Org-roam's protocol extensions, you have to add the following to your init file:
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-roam-protocol)
+#+END_SRC
+
+The instructions for setting up =org-protocol== are reproduced below.
+
+We will also need to create a desktop application for =emacsclient=. The
+instructions for various platforms are shown below.
+
+For Linux users, create a desktop application in =~/.local/share/applications/org-protocol.desktop=:
+
+#+begin_example
+[Desktop Entry]
+Name=Org-Protocol
+Exec=emacsclient %u
+Icon=emacs-icon
+Type=Application
+Terminal=false
+MimeType=x-scheme-handler/org-protocol
+#+end_example
+
+Associate =org-protocol://= links with the desktop application by
+running in your shell:
+
+#+BEGIN_SRC bash
+xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+#+END_SRC
+
+To disable the "confirm" prompt in Chrome, you can also make Chrome
+show a checkbox to tick, so that the =Org-Protocol Client= app will be used
+without confirmation. To do this, run in a shell:
+
+#+BEGIN_SRC bash
+sudo mkdir -p /etc/opt/chrome/policies/managed/
+sudo tee /etc/opt/chrome/policies/managed/external_protocol_dialog.json >/dev/null <<'EOF'
+{
+  "ExternalProtocolDialogShowAlwaysOpenCheckbox": true
+}
+EOF
+sudo chmod 644 /etc/opt/chrome/policies/managed/external_protocol_dialog.json
+#+END_SRC
+
+and then restart Chrome (for example, by navigating to <chrome://restart>) to
+make the new policy take effect.
+
+See [[https://www.chromium.org/administrators/linux-quick-start][here]] for more info on the =/etc/opt/chrome/policies/managed= directory and
+[[https://cloud.google.com/docs/chrome-enterprise/policies/?policy=ExternalProtocolDialogShowAlwaysOpenCheckbox][here]] for information on the =ExternalProtocolDialogShowAlwaysOpenCheckbox= policy.
+
+For MacOS, one solution is to use [[https://github.com/sveinbjornt/Platypus][Platypus]]. Here are the instructions for
+setting up with Platypus and Chrome:
+
+1. Install and launch Platypus (with [[https://brew.sh/][Homebrew]]):
+
+#+BEGIN_SRC bash
+brew cask install platypus
+#+END_SRC
+
+2. Create a script =launch_emacs.sh=:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+/usr/local/bin/emacsclient --no-wait $1
+#+END_SRC
+
+3. Create a Platypus app with the following settings:
+
+#+begin_example
+| Setting                        | Value                     |
+|--------------------------------+---------------------------|
+| App Name                       | "OrgProtocol"             |
+| Script Type                    | "env" · "/usr/bin/env"    |
+| Script Path                    | "path/to/launch-emacs.sh" |
+| Interface                      | None                      |
+| Accept dropped items           | true                      |
+| Remain running after execution | false                     |
+#+end_example
+
+
+Inside =Settings=:
+
+#+begin_example
+| Setting                        | Value          |
+|--------------------------------+----------------|
+| Accept dropped files           | true           |
+| Register as URI scheme handler | true           |
+| Protocol                       | "org-protocol" |
+#+end_example
+
+To disable the "confirm" prompt in Chrome, you can also make Chrome
+show a checkbox to tick, so that the =OrgProtocol= app will be used
+without confirmation. To do this, run in a shell:
+
+#+BEGIN_SRC bash
+defaults write com.google.Chrome ExternalProtocolDialogShowAlwaysOpenCheckbox -bool true
+#+END_SRC
+
+
+If you're using [[https://github.com/railwaycat/homebrew-emacsmacport][Emacs Mac Port]], it registered its `Emacs.app` as the default
+handler for the URL scheme `org-protocol`. To make =OrgProtocol.app=
+the default handler instead, run:
+
+#+BEGIN_SRC bash
+defaults write com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers -array-add \
+'{"LSHandlerPreferredVersions" = { "LSHandlerRoleAll" = "-"; }; LSHandlerRoleAll = "org.yourusername.OrgProtocol"; LSHandlerURLScheme = "org-protocol";}'
+#+END_SRC
+
+Then restart your computer.
+
+
+** The =roam-file= protocol
+
+This is a simple protocol that opens the path specified by the =file=
+key (e.g. =org-protocol://roam-file?file=/tmp/file.org=). This is used
+in the generated graph.
+
+** The =roam-ref= Protocol
+
+This protocol finds or creates a new note with a given =ROAM_KEY= (see [[*Anatomy of an Org-roam File][Anatomy of an Org-roam File]]):
+
+[[file:images/roam-ref.gif]]
+
+To use this, create a Firefox bookmarklet as follows:
+
+#+BEGIN_SRC javascript
+javascript:location.href =
+'org-protocol://roam-ref?template=r&ref='
++ encodeURIComponent(location.href)
++ '&title='
++ encodeURIComponent(document.title)
+#+END_SRC
+
+or as a keybinding in =qutebrowser=, adding the following to the =autoconfig.yml= file:
+
+#+BEGIN_SRC yaml
+settings:
+  bindings.commands:
+    global:
+      normal:
+        gc: open javascript:void(location.href='org-protocol://roam-ref?template=r&ref='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title))
+#+END_SRC
+
+where =template= is the template key for a template in
+=org-roam-capture-ref-templates= (see [[*The Templating System][The Templating System]]). These templates
+should contain a =#+ROAM_KEY: ${ref}= in it.
+
 * Keystroke Index
 :PROPERTIES:
 :APPENDIX:   t
