@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Org-roam: (org-roam).
 #+TEXINFO_DIR_DESC: Rudimentary Roam Replica for Emacs.
-#+SUBTITLE: for version 1.1.1 (v1.1.1)
+#+SUBTITLE: for version 1.1.0 (v1.1.0-26-gc08933b+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:3 toc:2 creator:t
@@ -17,7 +17,7 @@
 #+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-version-strings
 
 #+TEXINFO: @noindent
-This manual is for Org-roam version 1.1.1.
+This manual is for Org-roam version 1.1.0 (v1.1.0-26-gc08933b+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@gmail.com>
@@ -106,13 +106,25 @@ Now see [[*Post-Installation Tasks][Post-Installation Tasks]].
 * TODO Getting Started
 
 Org-roam was built to support a workflow that was not possible with vanilla
-Org-mode. This flow is modelled after the [[https://zettelkasten.de/][Zettelkasten Method]], and many of [[https://roamresearch.com][Roam Research's]] workflows. It is crucial to understand that Org-roam does not
+Org-mode. This flow is modelled after the [[https://zettelkasten.de/][Zettelkasten Method]], and many of [[https://roamresearch.com][Roam
+Research's]] workflows. It is crucial to understand that Org-roam does not
 auto-magically make note-taking better -- it's changing the note-taking workflow
-that does. To understand more about the methods and madness, see [[*Note-taking Workflows][Note-taking Workflows]].
+that does. To understand more about the methods and madness, see [[*Note-taking Workflows][Note-taking
+Workflows]].
 
-In Org-roam, your notes (or zettels), are stored in individual files, in the
-=org-roam-directory=. For this tutorial, create an empty directory, and set
-=org-roam-directory= accordingly:
+- Variable: org-roam-directory
+
+  In Org-roam, your notes (or zettels), are stored in individual files, in the
+  =org-roam-directory=.
+
+  We encourage using a flat hierarchy for storing notes, but some prefer using
+  folders for storing specific kinds of notes (e.g. websites, papers). This is
+  fine; Org-roam searches recursively within =org-roam-directory= for any notes.
+  Instead of relying on the file hierarchy for any form of categorization, we
+  solely rely on links between files to establish connections between notes.
+
+For this tutorial, create an empty directory, and set =org-roam-directory=
+accordingly:
 
 #+BEGIN_SRC emacs-lisp
 (make-directory "~/org-roam")
