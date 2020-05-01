@@ -1,19 +1,164 @@
 #+TITLE: Org-roam User Manual
+:PREAMBLE:
 #+AUTHOR: Jethro Kuan
 #+EMAIL: jethrokuan95@gmail.com
+#+DATE: 2020-2020
 #+LANGUAGE: en
 
 #+TEXINFO_DIR_CATEGORY: Emacs
-#+TEXINFO_DIR_TITLE: org-roam: (org-roam).
+#+TEXINFO_DIR_TITLE: Org-roam: (org-roam).
 #+TEXINFO_DIR_DESC: Rudimentary Roam Replica for Emacs.
 #+SUBTITLE: for version 1.1.1
 
-
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:3 toc:2 creator:t
+#+PROPERTY: header-args :eval never
+#+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-copyright-years
+#+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-version-strings
 
-* Test 1
-* Test 2
+#+TEXINFO: @noindent
+This manual is for Org-roam version 1.1.1.
+
+#+BEGIN_QUOTE
+Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@gmail.com>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+#+END_QUOTE
+
+:END:
+
+* Introduction
+
+Org-roam is a [[https://roamresearch.com/][Roam Research]] replica built around the
+all-powerful [[https://orgmode.org/][Org-mode]].
+
+Org-roam is a solution for effortless non-hierarchical note-taking
+with Org-mode. With Org-roam, notes flow naturally, making note-taking
+fun and easy. Org-roam should also work as a plug-and-play solution
+for anyone already using Org-mode for their personal wiki.
+
+To understand more about Roam, a collection of links are available in
+[[*Note-taking Workflows][Note-taking Workflows]].
+
+Org-roam aims to implement the core features of Roam, leveraging the
+mature ecosystem around Org-mode where possible. Eventually, we hope
+to further introduce features enabled by the Emacs ecosystem.
+
+Org-roam provides several benefits over other tooling:
+
+- Privacy and Security :: Edit your personal wiki completely offline, entirely in your control. Encrypt your notes with GPG.
+- Longevity of Plain Text :: Unlike web solutions like Roam research, the notes are first and foremost plain Org-mode files -- Org-roam simply builds up an auxilliary database to give the personal wiki superpowers. Having your notes in plain-text is crucial for the longevity of your wiki. Never have to worry about proprietary web solutions being taken down. Edit your plain-text notes in notepad if all other editors cease to exist
+- Free and Open Source :: Org-roam is free and open-source, which means that if you feel unhappy with any part of Org-roam, you may choose to extend Org-roam, or open a PR.
+- Leverages the Org-mode ecosystem :: Over the years, Emacs and Org-mode has developed into a mature system for plain-text organization. Building upon Org-mode already puts Org-roam light-years ahead of many other solutions.
+- Built on Emacs :: Emacs is also a fantastic interface for editing text, and we can inherit many of the powerful text-navigation and editing packages available to Emacs.
+* Installation
+** _ :ignore:
+Org-roam can be installed using Emacs' package manager or manually from its development repository.
+
+** Installing from MELPA
+
+Org-roam is available from Melpa and Melpa-Stable. If you haven't used Emacs' package manager before, you may familiarize yourself with it by reading the documentation in the Emacs manual, see info:emacs#Packages. Then, add one of the archives to =package-archives=:
+
+- To use Melpa:
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.org/packages/") t)
+#+END_SRC
+
+- To use Melpa-Stable:
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+#+END_SRC
+
+Once you have added your preferred archive, you need to update the
+local package list using:
+
+#+BEGIN_EXAMPLE
+  M-x package-refresh-contents RET
+#+END_EXAMPLE
+
+Once you have done that, you can install Org-roam and its dependencies
+using:
+
+#+BEGIN_EXAMPLE
+  M-x package-install RET org-roam RET
+#+END_EXAMPLE
+
+Now see [[*Post-Installation Tasks][Post-Installation Tasks]].
+
+** TODO Installing from the Git Repository
+
+** TODO Post-Installation Tasks
+
+* TODO Getting Started
+* Keystroke Index
+:PROPERTIES:
+:APPENDIX:   t
+:INDEX:      ky
+:COOKIE_DATA: recursive
+:END:
+* Command Index
+:PROPERTIES:
+:APPENDIX:   t
+:INDEX:      cp
+:END:
+* Function Index
+:PROPERTIES:
+:APPENDIX:   t
+:INDEX:      fn
+:END:
+* Variable Index
+:PROPERTIES:
+:APPENDIX:   t
+:INDEX:      vr
+:END:
+
+* _ Copying
+:PROPERTIES:
+:COPYING:    t
+:END:
+
+#+BEGIN_QUOTE
+Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@gmail.com>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+#+END_QUOTE
+
+* Appendix
+** Note-taking Workflows
+- Books ::
+  - [[https://www.goodreads.com/book/show/34507927-how-to-take-smart-notes][How To Take Smart Notes]]
+- Articles ::
+  - [[https://www.lesswrong.com/posts/NfdHG6oHBJ8Qxc26s/the-zettelkasten-method-1][The Zettelkasten Method - LessWrong 2.0]]
+  - [[https://reddit.com/r/RoamResearch/comments/eho7de/building_a_second_brain_in_roamand_why_you_might][Building a Second Brain in Roam...And Why You Might Want To : RoamResearch]]
+  - [[https://www.nateliason.com/blog/roam][Roam Research: Why I Love It and How I Use It - Nat Eliason]]
+  - [[https://twitter.com/adam_keesling/status/1196864424725774336?s=20][Adam Keesling's Twitter Thread]]
+  - [[https://blog.jethro.dev/posts/how_to_take_smart_notes_org/][How To Take Smart Notes With Org-mode · Jethro Kuan]]
+- Threads ::
+  - [[https://news.ycombinator.com/item?id=22473209][Ask HN: How to Take Good Notes]]
+- Videos ::
+  - [[https://www.youtube.com/watch?v=RvWic15iXjk][How to Use Roam to Outline a New Article in Under 20 Minutes]]
 
 * _ :ignore:
 # Local Variables:

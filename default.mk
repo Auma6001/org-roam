@@ -13,8 +13,7 @@ TOP := $(dir $(lastword $(MAKEFILE_LIST)))
 # installed either at "../<DEPENDENCY>", or when using package.el
 # at "ELPA_DIR/<DEPENDENCY>-<HIGHEST-VERSION>".
 
-PREFIX   ?= /usr/local
-sharedir ?= $(PREFIX)/share
+sharedir ?= $(HOME)/.local/share
 lispdir  ?= $(sharedir)/emacs/site-lisp/org-roam
 infodir  ?= $(sharedir)/info
 docdir   ?= $(sharedir)/doc/org-roam

@@ -6,9 +6,26 @@
 @documentlanguage en
 @c %**end of header
 
+@copying
+@quotation
+Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@@gmail.com>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
+General Public License for more details.
+
+@end quotation
+@end copying
+
 @dircategory Emacs
 @direntry
-* org-roam: (org-roam). Rudimentary Roam Replica for Emacs.
+* Org-roam: (org-roam). Rudimentary Roam Replica for Emacs.
 @end direntry
 
 @finalout
@@ -16,6 +33,9 @@
 @title Org-roam User Manual
 @subtitle for version 1.1.1
 @author Jethro Kuan
+@page
+@vskip 0pt plus 1filll
+@insertcopying
 @end titlepage
 
 @contents
@@ -23,18 +43,208 @@
 @ifnottex
 @node Top
 @top Org-roam User Manual
+
+@noindent
+This manual is for Org-roam version 1.1.1.
+
+@quotation
+Copyright (C) 2020-2020 Jethro Kuan <jethorkuan95@@gmail.com>
+
+You can redistribute this document and/or modify it under the terms
+of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This document is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE@.  See the GNU
+General Public License for more details.
+
+@end quotation
 @end ifnottex
 
 @menu
-* Test 1::
-* Test 2::
+* Introduction::
+* Installation::
+* Getting Started::
+* Keystroke Index::
+* Command Index::
+* Function Index::
+* Variable Index::
+* Appendix::
+
+@detailmenu
+--- The Detailed Node Listing ---
+
+Installation
+
+* Installing from MELPA::
+* Installing from the Git Repository::
+* Post-Installation Tasks::
+
+Appendix
+
+* Note-taking Workflows::
+
+@end detailmenu
 @end menu
 
-@node Test 1
-@chapter Test 1
+@node Introduction
+@chapter Introduction
 
-@node Test 2
-@chapter Test 2
+Org-roam is a @uref{https://roamresearch.com/, Roam Research} replica built around the
+all-powerful @uref{https://orgmode.org/, Org-mode}.
+
+Org-roam is a solution for effortless non-hierarchical note-taking
+with Org-mode. With Org-roam, notes flow naturally, making note-taking
+fun and easy. Org-roam should also work as a plug-and-play solution
+for anyone already using Org-mode for their personal wiki.
+
+To understand more about Roam, a collection of links are available in
+@ref{Note-taking Workflows}.
+
+Org-roam aims to implement the core features of Roam, leveraging the
+mature ecosystem around Org-mode where possible. Eventually, we hope
+to further introduce features enabled by the Emacs ecosystem.
+
+Org-roam provides several benefits over other tooling:
+
+@table @asis
+@item Privacy and Security
+Edit your personal wiki completely offline, entirely in your control. Encrypt your notes with GPG@.
+@item Longevity of Plain Text
+Unlike web solutions like Roam research, the notes are first and foremost plain Org-mode files -- Org-roam simply builds up an auxilliary database to give the personal wiki superpowers. Having your notes in plain-text is crucial for the longevity of your wiki. Never have to worry about proprietary web solutions being taken down. Edit your plain-text notes in notepad if all other editors cease to exist
+@item Free and Open Source
+Org-roam is free and open-source, which means that if you feel unhappy with any part of Org-roam, you may choose to extend Org-roam, or open a PR@.
+@item Leverages the Org-mode ecosystem
+Over the years, Emacs and Org-mode has developed into a mature system for plain-text organization. Building upon Org-mode already puts Org-roam light-years ahead of many other solutions.
+@item Built on Emacs
+Emacs is also a fantastic interface for editing text, and we can inherit many of the powerful text-navigation and editing packages available to Emacs.
+@end table
+
+@node Installation
+@chapter Installation
+
+Org-roam can be installed using Emacs' package manager or manually from its development repository.
+
+@menu
+* Installing from MELPA::
+* Installing from the Git Repository::
+* Post-Installation Tasks::
+@end menu
+
+@node Installing from MELPA
+@section Installing from MELPA
+
+Org-roam is available from Melpa and Melpa-Stable. If you haven't used Emacs' package manager before, you may familiarize yourself with it by reading the documentation in the Emacs manual, see @ref{Packages,,,emacs,}. Then, add one of the archives to @samp{package-archives}:
+
+@itemize
+@item
+To use Melpa:
+@end itemize
+
+@lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+@end lisp
+
+@itemize
+@item
+To use Melpa-Stable:
+@end itemize
+
+@lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+@end lisp
+
+Once you have added your preferred archive, you need to update the
+local package list using:
+
+@example
+M-x package-refresh-contents RET
+@end example
+
+Once you have done that, you can install Org-roam and its dependencies
+using:
+
+@example
+M-x package-install RET org-roam RET
+@end example
+
+Now see @ref{Post-Installation Tasks}.
+
+@node Installing from the Git Repository
+@section @strong{TODO} Installing from the Git Repository
+
+@node Post-Installation Tasks
+@section @strong{TODO} Post-Installation Tasks
+
+@node Getting Started
+@chapter @strong{TODO} Getting Started
+
+@node Keystroke Index
+@appendix Keystroke Index
+
+@printindex ky
+
+@node Command Index
+@appendix Command Index
+
+@printindex cp
+
+@node Function Index
+@appendix Function Index
+
+@printindex fn
+
+@node Variable Index
+@appendix Variable Index
+
+@printindex vr
+
+@node Appendix
+@chapter Appendix
+
+@menu
+* Note-taking Workflows::
+@end menu
+
+@node Note-taking Workflows
+@section Note-taking Workflows
+
+@table @asis
+@item Books
+@itemize
+@item
+@uref{https://www.goodreads.com/book/show/34507927-how-to-take-smart-notes, How To Take Smart Notes}
+@end itemize
+@item Articles
+@itemize
+@item
+@uref{https://www.lesswrong.com/posts/NfdHG6oHBJ8Qxc26s/the-zettelkasten-method-1, The Zettelkasten Method - LessWrong 2.0}
+@item
+@uref{https://reddit.com/r/RoamResearch/comments/eho7de/building_a_second_brain_in_roamand_why_you_might, Building a Second Brain in Roam@dots{}And Why You Might Want To : RoamResearch}
+@item
+@uref{https://www.nateliason.com/blog/roam, Roam Research: Why I Love It and How I Use It - Nat Eliason}
+@item
+@uref{https://twitter.com/adam_keesling/status/1196864424725774336?s=20, Adam Keesling's Twitter Thread}
+@item
+@uref{https://blog.jethro.dev/posts/how_to_take_smart_notes_org/, How To Take Smart Notes With Org-mode · Jethro Kuan}
+@end itemize
+@item Threads
+@itemize
+@item
+@uref{https://news.ycombinator.com/item?id=22473209, Ask HN: How to Take Good Notes}
+@end itemize
+@item Videos
+@itemize
+@item
+@uref{https://www.youtube.com/watch?v=RvWic15iXjk, How to Use Roam to Outline a New Article in Under 20 Minutes}
+@end itemize
+@end table
 
 Emacs 28.0.50 (Org mode 9.3)
 @bye
