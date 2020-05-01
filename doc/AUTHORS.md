@@ -14,7 +14,7 @@ Maintainers
 ----------
 
 - Jethro Kuan <jethrokuan95@gmail.com>
-- Leo Vivier <zaephon@gmail.com>
+- Leo Vivier <leo.vivier+dev@gmail.com>
 
 Contributors
 ------------
@@ -26,7 +26,7 @@ Contributors
 - Josh English <josh@joshenglish.com>
 - Jürgen Hötzel <juergen@archlinux.org>
 - Langston Barrett <langston.barrett@gmail.com>
-- Leo Vivier <zaephon@gmail.com>
+- Leo Vivier <leo.vivier+dev@gmail.com>
 - Michael Glaesemann <grzm@seespotcode.net>
 - Michael Herold <github@michaeljherold.com>
 - Noboru <noboru.ota@gmail.com>

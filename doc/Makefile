@@ -118,7 +118,7 @@ Maintainers
 ----------
 
 - Jethro Kuan <jethrokuan95@gmail.com>
-- Leo Vivier <zaephon@gmail.com>
+- Leo Vivier <leo.vivier+dev@gmail.com>
 
 Contributors
 ------------
