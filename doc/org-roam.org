@@ -103,74 +103,72 @@ Now see [[*Post-Installation Tasks][Post-Installation Tasks]].
 
 ** TODO Post-Installation Tasks
 
-* TODO Getting Started
+* Getting Started
 
-Org-roam was built to support a workflow that was not possible with vanilla
-Org-mode. This flow is modelled after the [[https://zettelkasten.de/][Zettelkasten Method]], and many of [[https://roamresearch.com][Roam
-Research's]] workflows. It is crucial to understand that Org-roam does not
-auto-magically make note-taking better -- it's changing the note-taking workflow
-that does. To understand more about the methods and madness, see [[*Note-taking Workflows][Note-taking
-Workflows]].
+This short tutorial describes the essential commands used in Org-roam, to help
+you get started.
 
-- Variable: org-roam-directory
+First, it is important to understand how Org-roam was designed. Org-roam was
+built to support a workflow that was not possible with vanilla Org-mode. This
+flow is modelled after the [[https://zettelkasten.de/][Zettelkasten Method]], and many of [[https://roamresearch.com][Roam Research's]]
+workflows. Org-roam does not magically make note-taking better -- this often
+requires a radical change in your current note-taking workflow. To understand
+more about the methods and madness, see [[*Note-taking Workflows][Note-taking Workflows]].
 
-  In Org-roam, your notes (or zettels), are stored in individual files, in the
-  =org-roam-directory=.
-
-  We encourage using a flat hierarchy for storing notes, but some prefer using
-  folders for storing specific kinds of notes (e.g. websites, papers). This is
-  fine; Org-roam searches recursively within =org-roam-directory= for any notes.
-  Instead of relying on the file hierarchy for any form of categorization, we
-  solely rely on links between files to establish connections between notes.
-
-For this tutorial, create an empty directory, and set =org-roam-directory=
-accordingly:
+To begin using Org-roam, one should set the =org-roam-directory= to the directory
+containing your notes. For this tutorial, create an empty directory, and set the
+=org-roam-directory=:
 
 #+BEGIN_SRC emacs-lisp
 (make-directory "~/org-roam")
 (setq org-roam-directory "~/org-roam")
 #+END_SRC
 
-Org-roam's entry point is the global minor =org-roam-mode=. This sets up Emacs
-with several hooks, for keeping the org-roam cache consistently updated, as well
-as showing the backlinks buffer.
+We encourage using a flat hierarchy for storing notes, but some prefer using
+folders for storing specific kinds of notes (e.g. websites, papers). This is
+fine; Org-roam searches recursively within =org-roam-directory= for any notes.
+Instead of relying on the file hierarchy for any form of categorization, we
+solely rely on links between files to establish connections between notes.
 
-The cache is a sqlite database named =org-roam.db=, which resides at the root
-=org-roam-directory=. Activating =org-roam-mode= builds the cache, which may take a
-while the first time, but is often instantaneous in subsequent runs. To build
-the cache manually again, run =M-x org-roam-db-build-cache=.
+Next, we need to enable the global minor mode =org-roam-mode=. This sets up Emacs
+with several hooks, builds a cache and keeps it consistent. We recommend
+starting =org-roam-mode= on startup:
 
-=org-roam-find-file= shows the list of titles for notes that reside in
-=org-roam-directory=. Selecting a note title will bring you to the corresponding
-note. Entering a title of a note that does not yet exist will create a new note
-with that title.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook 'org-roam-mode)
+#+END_SRC
 
-[[file:images/org-roam-find-file.gif]]
+To build the cache manually, one can run =M-x org-roam-db-build-cache=. The cache
+is a sqlite database named =org-roam.db=, which defaults to residing in the root
+=org-roam-directory=. Cache builds may take a while the first time, but is often
+instantaneous in subsequent runs.
 
-Note that in the above image, the [[https://github.com/abo-abo/swiper][Ivy]] completion frontend is used. The default
-frontend has some usability issues with non-matching candidates (e.g. when you
-want to enter a title of a new note, there is no completion candidate), so
-either Ivy or Helm is recommended.
+Let us now create our first note. Call =M-x org-roam-find-file=. This shows a list
+of titles for notes that reside in =org-roam-directory=. It should show nothing
+right now, since there are no notes in the directory. Entering the title of the
+note you wish to create, and pressing =RET= should begin the note creation
+process. This process uses =org-capture='s templating system, and can be freely
+customized (see [[*The Templating System][The Templating System]]). Using the default template, pressing =C-c
+C-c= finishes the note capture. Running =M-x org-roam-find-file= again should show
+the note you have created, and selecting that entry will bring you to that note.
 
-=org-roam-insert= insert links to existing (or new) notes. Entering a non-existent
-title will also create a new note with that title.
+The crux of Org-roam is making it easy to create notes, and link them together.
+To link notes together, we call =M-x org-roam-insert=. This brings up a prompt
+with a list of title for existing notes. Selecting an existing entry will create
+and insert a link to the current file. Entering a non-existent title will create
+a new note with that title. Good usage of Org-roam requires liberally linking
+files: this facilitates building up a dense knowledge graph of inter-connected
+notes.
 
-[[file:images/org-roam-insert-filetag.gif]]
+Org-roam provides an interface to view backlinks. It shows backlinks for the
+currently active Org-roam note, along with some surrounding context. To toggle
+the visibility of this buffer, call =M-x org-roam=.
 
-Good usage of Org-roam requires liberally linking files. This allows
-the build-up of a dense knowledge graph.
-
-The Org-roam buffer is often displayed in the side window. It shows
-backlinks for the currently active Org-roam note, along with some
-surrounding context. To bring up toggle the visibility of this buffer, call =M-x org-roam=.
-
-[[file:images/org-roam-buffer.gif]]
-
-Org-roam also provides graphing capabilities, using Graphviz. It generates
-graphs with notes as nodes, and links between them as edges. The generated graph
-can be used to navigate to the files, but this requires some additional setup (see [[*Roam Protocol][Roam Protocol]]).
-
-[[file:images/org-roam-graph.gif]]
+For a visual representation of the notes and their connections, Org-roam also
+provides graphing capabilities, using Graphviz. It generates graphs with notes
+as nodes, and links between them as edges. The generated graph can be used to
+navigate to the files, but this requires some additional setup (see [[*Roam Protocol][Roam
+Protocol]]).
 
 * Anatomy of an Org-roam File
 
