@@ -8,7 +8,7 @@
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: Org-roam: (org-roam).
 #+TEXINFO_DIR_DESC: Rudimentary Roam Replica for Emacs.
-#+SUBTITLE: for version 1.1.0 (v1.1.0-26-gc08933b+1)
+#+SUBTITLE: for version 1.1.0 (v1.1.0-28-g6726802+1)
 
 #+TEXINFO_DEFFN: t
 #+OPTIONS: H:4 num:3 toc:2 creator:t
@@ -17,7 +17,7 @@
 #+BIND: ox-texinfo+-before-export-hook ox-texinfo+-update-version-strings
 
 #+TEXINFO: @noindent
-This manual is for Org-roam version 1.1.0 (v1.1.0-26-gc08933b+1).
+This manual is for Org-roam version 1.1.0 (v1.1.0-28-g6726802+1).
 
 #+BEGIN_QUOTE
 Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@gmail.com>
@@ -215,94 +215,24 @@ The backlinks buffer will show any cites of this key: e.g.
 [[file:images/org-ref-citelink.png]]
 * The Templating System
 
-Rather than creating blank files on =org-roam-insert= and
-=org-roam-find-file=, it is may be desirable to prefill the file with
-content. This may include:
+Rather than creating blank files on =org-roam-insert= and =org-roam-find-file=, it
+may be desirable to prefill the file with templated content. This may include:
 
 - Time of creation
 - File it was created from
 - Clipboard content
 - Any other data you may want to input manually
 
-This requires a complex template insertion system, but fortunately, Org
-ships with a powerful one: =org-capture=. However, org-capture was not
-designed for such use. Org-roam abuses =org-capture= to some extent,
-extending its syntax. To first understand how org-roam's templating
-system works, it may be useful to look into org-capture.
+This requires a complex template insertion system. Fortunately, Org ships with a
+powerful one: =org-capture=. However, org-capture was not designed for such use.
+Org-roam abuses =org-capture=, extending its syntax. To first understand how
+org-roam's templating system works, it may be useful to look into basic usage of
+=org-capture=.
 
-The org-roam capture template extends org-capture's template with 2
-additional properties:
+** Template Walkthrough
 
-1. =:file-name=: This is the file name template used when a new note is
-   created. Notes can be placed in sub-directories by prepending them to
-   the filename (=sub/file-name=)
-2. =:head=: This is the template that is inserted on initial note
-   creation.
-
-** Org-roam Template Expansion
-
-Org-roam's template definitions also extend org-capture's template
-syntax, to allow prefilling of strings. In many scenarios,
-=org-roam--capture= is passed a mapping between variables and strings.
-For example, during =org-roam-insert=, a title is prompted for. If the
-title doesn't already exist, we would like to create a new file, without
-prompting for the title again.
-
-Variables passed are expanded with the =${var}= syntax. For example,
-during =org-roam-insert=, =${title}= is prefilled for expansion. Any
-variables that do not contain strings, are prompted for values using
-=completing-read=.
-
-After doing this expansion, the org-capture's template expansion system
-is used to fill up the rest of the template. You may read up more on
-this on [[https://orgmode.org/manual/Template-expansion.html#Template-expansion][org-capture's documentation page]].
-
-For example, take the template: ="%<%Y%m%d%H%M%S>-${title}"=, with the
-title ="Foo"=. The template is first expanded into
-=%<%Y%m%d%H%M%S>-Foo=. Then org-capture expands =%<%Y%m%d%H%M%S>= with
-timestamp: e.g. =20200213032037-Foo=.
-
-All of the flexibility afforded by emacs and org-mode are available. For
-example, if you want to encode a UTC timestamp in the filename, you can
-take advantage of org-mode's =%(EXP)= template expansion to call
-=format-time-string= directly to provide its third argument to specify
-UTC.
-
-#+BEGIN_SRC emacs-lisp
-  ("d" "default" plain (function org-roam--capture-get-point)
-       "%?"
-       :file-name "%(format-time-string \"%Y-%m-%d--%H-%M-%SZ--${slug}\" (current-time) t)"
-       :head "#+TITLE: ${title}\n"
-       :unnarrowed t)
-#+END_SRC
-
-Similarly, if you want to change how titles are transformed into slugs,
-you can override =org-roam--title-to-slug=. For example, to use hyphens
-instead of underscores:
-
-#+BEGIN_SRC emacs-lisp
-    (defun org-roam--title-to-slug (title)
-      "Convert TITLE to a filename-suitable slug. Uses hyphens rather than underscores."
-      (cl-flet* ((nonspacing-mark-p (char)
-                                    (eq 'Mn (get-char-code-property char 'general-category)))
-                 (strip-nonspacing-marks (s)
-                                         (apply #'string (seq-remove #'nonspacing-mark-p
-                                                                     (ucs-normalize-NFD-string s))))
-                 (cl-replace (title pair)
-                             (replace-regexp-in-string (car pair) (cdr pair) title)))
-        (let* ((pairs `(("[^[:alnum:][:digit:]]" . "-")  ;; convert anything not alphanumeric
-                        ("--*" . "-")  ;; remove sequential underscores
-                        ("^-" . "")  ;; remove starting underscore
-                        ("-$" . "")))  ;; remove ending underscore
-               (slug (-reduce-from #'cl-replace (strip-nonspacing-marks title) pairs)))
-          (s-downcase slug))))
-#+END_SRC
-
-This templating system is used throughout org-roam templates.
-
-** Template examples
-
-Here I walkthrough the default template, reproduced below.
+To demonstrate the additions made to org-capture templates. Here, we walkthrough
+the default template, reproduced below.
 
 #+BEGIN_SRC emacs-lisp
   ("d" "default" plain (function org-roam--capture-get-point)
@@ -332,7 +262,43 @@ Here I walkthrough the default template, reproduced below.
 
 Other options you may want to learn about include =:immediate-finish=.
 
-* Configuration
+** Org-roam Template Expansion
+
+Org-roam's template definitions also extend org-capture's template syntax, to
+allow prefilling of strings. We have seen a glimpse of this in [[*Template Walkthrough][Template
+Walkthrough]].
+
+In org-roam templates, the =${var}= syntax allows for the expansion of
+variables, stored in =org-roam-capture--info=. For example, during
+=org-roam-insert=, the user is prompted for a title. Upon entering a
+non-existent title, the =title= key in =org-roam-capture--info= is set to the
+provided title. =${title}= is then expanded into the provided title during the
+org-capture process. Any variables that do not contain strings, are prompted for
+values using =completing-read=.
+
+After doing this expansion, the org-capture's template expansion system
+is used to fill up the rest of the template. You may read up more on
+this on [[https://orgmode.org/manual/Template-expansion.html#Template-expansion][org-capture's documentation page]].
+
+To illustrate this dual expansion process, take for example the template string:
+="%<%Y%m%d%H%M%S>-${title}"=, with the title ="Foo"=. The template is first
+expanded into =%<%Y%m%d%H%M%S>-Foo=. Then org-capture expands =%<%Y%m%d%H%M%S>=
+with timestamp: e.g. =20200213032037-Foo=.
+
+All of the flexibility afforded by Emacs and Org-mode are available. For
+example, if you want to encode a UTC timestamp in the filename, you can take
+advantage of org-mode's =%(EXP)= template expansion to call =format-time-string=
+directly to provide its third argument to specify UTC.
+
+#+BEGIN_SRC emacs-lisp
+  ("d" "default" plain (function org-roam--capture-get-point)
+       "%?"
+       :file-name "%(format-time-string \"%Y-%m-%d--%H-%M-%SZ--${slug}\" (current-time) t)"
+       :head "#+TITLE: ${title}\n"
+       :unnarrowed t)
+#+END_SRC
+
+* Concepts and Configuration
 The number of configuration options is deliberately kept small, to keep
 the Org-roam codebase manageable. However, we attempt to accommodate as
 many usage styles as possible.
@@ -340,63 +306,52 @@ many usage styles as possible.
 All of Org-roam's customization options can be viewed via
 =M-x customize-group org-roam=.
 
-** Setting the Org-roam Directory
+** Directories and Files
 
-Set =org-roam-directory= to the folder containing all your Org files:
+This section concerns the placement and creation of files.
 
-#+BEGIN_SRC emacs-lisp
-  (setq org-roam-directory "/path/to/org/")
-#+END_SRC
+- Variable: org-roam-directory
 
-Every Org file, at any level of nesting, within =/path/to/org/= is
-considered part of the Org-roam ecosystem.
+  This is the default path to Org-roam files. All Org files, at any level of
+  nesting, are considered part of the Org-roam.
 
-*** Having More Than One Org-roam Directory
+- Variable: org-roam-db-location
 
-Emacs supports directory-local variables, allowing the value of
-=org-roam-directory= to be different in different directories. It does
-this by checking for a file named =.dir-locals.el=.
+  Location of the Org-roam database. If this is non-nil, the Org-roam sqlite
+  database is saved here.
 
-To add support for multiple directories, override the
-=org-roam-directory= variable using directory-local variables. This is
-what =.dir-locals.el= may contain:
+  It is the user’s responsibility to set this correctly, especially when used
+  with multiple Org-roam instances.
 
-#+BEGIN_SRC emacs-lisp
-  ((nil . ((org-roam-directory . "/path/to/here/"))))
-#+END_SRC
+** The Org-roam Buffer
 
-All files within that directory will be treated as their own separate
-set of Org-roam files. Remember to run =org-roam-db-build-cache= from a
-file within that directory, at least once.
+The Org-roam buffer displays backlinks for the currently active Org-roam note.
 
-** Org-roam Buffer
+- Variable: org-roam-buffer
 
-The Org-roam buffer defaults to popping up from the right. You may
-choose to set it to pop up from the left with
-=(setq org-roam-buffer-position 'left)=.
+  The name of the org-roam buffer. Defaults to =*org-roam*=.
 
-The Org-roam buffer name can also be renamed:
-e.g. =(setq org-roam-buffer "*my-buffer-name*")=.
+- Variable: org-roam-buffer-position
 
-The Org-roam buffer width is adjustable via =org-roam-buffer-width=. The
-value of =org-roam-buffer-width= set as a percentage of the total frame
-width. For example:
+  The position of the Org-roam buffer side window. Valid values are ='left=,
+  ='right=, ='top=, ='bottom=.
 
-#+BEGIN_SRC emacs-lisp
-  (setq org-roam-buffer-width 0.4)
-#+END_SRC
+- Variable: org-roam-buffer-width
 
-Will result in the Org-roam buffer taking up 40% of the screen width.
+  Width of =org-roam-buffer=. Has an effect only if =org-roam-buffer-position= is
+  ='left= or ='right=.
 
-You can change backlinks appearance in the buffer by customizing
-=org-roam-backlink= face (=M-x customize-face org-roam-backlink=).
+- Variable: org-roam-buffer-height
+
+  Height of =org-roam-buffer=. Has an effect only if =org-roam-buffer-position= is
+  ='top= or ='bottom=.
 
 ** Org-roam Links
 
-By default, links are inserted with the title as the link description.
-This can make them hard to distinguish from external links. You may
-choose add special indicators for Org-roam links by tweaking
-=org-roam-link-title-format=, for example:
+By default, links are inserted with the title as the link description. This can
+make them hard to distinguish from external links. You may choose add special
+indicators for Org-roam links by tweaking =org-roam-link-title-format=, for
+example:
 
 #+BEGIN_SRC emacs-lisp
   (setq org-roam-link-title-format "R:%s")
@@ -863,6 +818,24 @@ include
 [[https://orgmode.org/worg/org-contrib/org-drill.html][org-drill]], and
 [[https://github.com/abo-abo/pamparam][pamparam]].
 
+* FAQ
+** How do I have more than one Org-roam directory?
+
+Emacs supports directory-local variables, allowing the value of
+=org-roam-directory= to be different in different directories. It does this by
+checking for a file named =.dir-locals.el=.
+
+To add support for multiple directories, override the =org-roam-directory=
+variable using directory-local variables. This is what =.dir-locals.el= may
+contain:
+
+#+BEGIN_SRC emacs-lisp
+  ((nil . ((org-roam-directory . "/path/to/here/"))))
+#+END_SRC
+
+All files within that directory will be treated as their own separate
+set of Org-roam files. Remember to run =org-roam-db-build-cache= from a
+file within that directory, at least once.
 
 * _ :ignore:
 # Local Variables:

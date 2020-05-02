@@ -31,7 +31,7 @@ General Public License for more details.
 @finalout
 @titlepage
 @title Org-roam User Manual
-@subtitle for version 1.1.0 (v1.1.0-26-gc08933b+1)
+@subtitle for version 1.1.0 (v1.1.0-28-g6726802+1)
 @author Jethro Kuan
 @page
 @vskip 0pt plus 1filll
@@ -45,7 +45,7 @@ General Public License for more details.
 @top Org-roam User Manual
 
 @noindent
-This manual is for Org-roam version 1.1.0 (v1.1.0-26-gc08933b+1).
+This manual is for Org-roam version 1.1.0 (v1.1.0-28-g6726802+1).
 
 @quotation
 Copyright (C) 2020-2020 Jethro Kuan <jethrokuan95@@gmail.com>
@@ -69,13 +69,14 @@ General Public License for more details.
 * Getting Started::
 * Anatomy of an Org-roam File::
 * The Templating System::
-* Configuration::
+* Concepts and Configuration::
 * Roam Protocol::
 * Keystroke Index::
 * Command Index::
 * Function Index::
 * Variable Index::
 * Appendix::
+* FAQ::
 
 @detailmenu
 --- The Detailed Node Listing ---
@@ -93,22 +94,17 @@ Anatomy of an Org-roam File
 
 The Templating System
 
+* Template Walkthrough::
 * Org-roam Template Expansion::
-* Template examples::
 
-Configuration
+Concepts and Configuration
 
-* Setting the Org-roam Directory::
-* Org-roam Buffer::
+* Directories and Files::
+* The Org-roam Buffer::
 * Org-roam Links::
 * Org-roam Files::
 * Org-roam Graph Viewer::
 * Org-roam Completion System::
-
-Setting the Org-roam Directory
-
-* Having More Than One Org-roam Directory::
-
 
 Org-roam Files
 
@@ -138,6 +134,10 @@ Ecosystem
 * Org-journal::
 * Note-taking Add-ons::
 
+
+FAQ
+
+* How do I have more than one Org-roam directory?::
 
 @end detailmenu
 @end menu
@@ -240,75 +240,72 @@ Now see @ref{Post-Installation Tasks}.
 @section @strong{TODO} Post-Installation Tasks
 
 @node Getting Started
-@chapter @strong{TODO} Getting Started
+@chapter Getting Started
 
-Org-roam was built to support a workflow that was not possible with vanilla
-Org-mode. This flow is modelled after the @uref{https://zettelkasten.de/, Zettelkasten Method}, and many of @uref{https://roamresearch.com, Roam
-Research's} workflows. It is crucial to understand that Org-roam does not
-auto-magically make note-taking better -- it's changing the note-taking workflow
-that does. To understand more about the methods and madness, see @ref{Note-taking Workflows, , Note-taking
-Workflows}.
+This short tutorial describes the essential commands used in Org-roam, to help
+you get started.
 
-@defvar org-roam-directory
+First, it is important to understand how Org-roam was designed. Org-roam was
+built to support a workflow that was not possible with vanilla Org-mode. This
+flow is modelled after the @uref{https://zettelkasten.de/, Zettelkasten Method}, and many of @uref{https://roamresearch.com, Roam Research's}
+workflows. Org-roam does not magically make note-taking better -- this often
+requires a radical change in your current note-taking workflow. To understand
+more about the methods and madness, see @ref{Note-taking Workflows}.
 
-In Org-roam, your notes (or zettels), are stored in individual files, in the
-@samp{org-roam-directory}.
-
-We encourage using a flat hierarchy for storing notes, but some prefer using
-folders for storing specific kinds of notes (e.g. websites, papers). This is
-fine; Org-roam searches recursively within @samp{org-roam-directory} for any notes.
-Instead of relying on the file hierarchy for any form of categorization, we
-solely rely on links between files to establish connections between notes.
-@end defvar
-
-For this tutorial, create an empty directory, and set @samp{org-roam-directory}
-accordingly:
+To begin using Org-roam, one should set the @samp{org-roam-directory} to the directory
+containing your notes. For this tutorial, create an empty directory, and set the
+@samp{org-roam-directory}:
 
 @lisp
 (make-directory "~/org-roam")
 (setq org-roam-directory "~/org-roam")
 @end lisp
 
-Org-roam's entry point is the global minor @samp{org-roam-mode}. This sets up Emacs
-with several hooks, for keeping the org-roam cache consistently updated, as well
-as showing the backlinks buffer.
+We encourage using a flat hierarchy for storing notes, but some prefer using
+folders for storing specific kinds of notes (e.g. websites, papers). This is
+fine; Org-roam searches recursively within @samp{org-roam-directory} for any notes.
+Instead of relying on the file hierarchy for any form of categorization, we
+solely rely on links between files to establish connections between notes.
 
-The cache is a sqlite database named @samp{org-roam.db}, which resides at the root
-@samp{org-roam-directory}. Activating @samp{org-roam-mode} builds the cache, which may take a
-while the first time, but is often instantaneous in subsequent runs. To build
-the cache manually again, run @samp{M-x org-roam-db-build-cache}.
+Next, we need to enable the global minor mode @samp{org-roam-mode}. This sets up Emacs
+with several hooks, builds a cache and keeps it consistent. We recommend
+starting @samp{org-roam-mode} on startup:
 
-@samp{org-roam-find-file} shows the list of titles for notes that reside in
-@samp{org-roam-directory}. Selecting a note title will bring you to the corresponding
-note. Entering a title of a note that does not yet exist will create a new note
-with that title.
+@lisp
+(add-hook 'after-init-hook 'org-roam-mode)
+@end lisp
 
-@image{images/org-roam-find-file,,,,gif}
+To build the cache manually, one can run @samp{M-x org-roam-db-build-cache}. The cache
+is a sqlite database named @samp{org-roam.db}, which defaults to residing in the root
+@samp{org-roam-directory}. Cache builds may take a while the first time, but is often
+instantaneous in subsequent runs.
 
-Note that in the above image, the @uref{https://github.com/abo-abo/swiper, Ivy} completion frontend is used. The default
-frontend has some usability issues with non-matching candidates (e.g. when you
-want to enter a title of a new note, there is no completion candidate), so
-either Ivy or Helm is recommended.
+Let us now create our first note. Call @samp{M-x org-roam-find-file}. This shows a list
+of titles for notes that reside in @samp{org-roam-directory}. It should show nothing
+right now, since there are no notes in the directory. Entering the title of the
+note you wish to create, and pressing @samp{RET} should begin the note creation
+process. This process uses @samp{org-capture}'s templating system, and can be freely
+customized (see @ref{The Templating System}). Using the default template, pressing @samp{C-c
+C-c} finishes the note capture. Running @samp{M-x org-roam-find-file} again should show
+the note you have created, and selecting that entry will bring you to that note.
 
-@samp{org-roam-insert} insert links to existing (or new) notes. Entering a non-existent
-title will also create a new note with that title.
+The crux of Org-roam is making it easy to create notes, and link them together.
+To link notes together, we call @samp{M-x org-roam-insert}. This brings up a prompt
+with a list of title for existing notes. Selecting an existing entry will create
+and insert a link to the current file. Entering a non-existent title will create
+a new note with that title. Good usage of Org-roam requires liberally linking
+files: this facilitates building up a dense knowledge graph of inter-connected
+notes.
 
-@image{images/org-roam-insert-filetag,,,,gif}
+Org-roam provides an interface to view backlinks. It shows backlinks for the
+currently active Org-roam note, along with some surrounding context. To toggle
+the visibility of this buffer, call @samp{M-x org-roam}.
 
-Good usage of Org-roam requires liberally linking files. This allows
-the build-up of a dense knowledge graph.
-
-The Org-roam buffer is often displayed in the side window. It shows
-backlinks for the currently active Org-roam note, along with some
-surrounding context. To bring up toggle the visibility of this buffer, call @samp{M-x org-roam}.
-
-@image{images/org-roam-buffer,,,,gif}
-
-Org-roam also provides graphing capabilities, using Graphviz. It generates
-graphs with notes as nodes, and links between them as edges. The generated graph
-can be used to navigate to the files, but this requires some additional setup (see @ref{Roam Protocol}).
-
-@image{images/org-roam-graph,,,,gif}
+For a visual representation of the notes and their connections, Org-roam also
+provides graphing capabilities, using Graphviz. It generates graphs with notes
+as nodes, and links between them as edges. The generated graph can be used to
+navigate to the files, but this requires some additional setup (see @ref{Roam Protocol, , Roam
+Protocol}).
 
 @node Anatomy of an Org-roam File
 @chapter Anatomy of an Org-roam File
@@ -367,9 +364,8 @@ The backlinks buffer will show any cites of this key: e.g.
 @node The Templating System
 @chapter The Templating System
 
-Rather than creating blank files on @samp{org-roam-insert} and
-@samp{org-roam-find-file}, it is may be desirable to prefill the file with
-content. This may include:
+Rather than creating blank files on @samp{org-roam-insert} and @samp{org-roam-find-file}, it
+may be desirable to prefill the file with templated content. This may include:
 
 @itemize
 @item
@@ -385,97 +381,22 @@ Clipboard content
 Any other data you may want to input manually
 @end itemize
 
-This requires a complex template insertion system, but fortunately, Org
-ships with a powerful one: @samp{org-capture}. However, org-capture was not
-designed for such use. Org-roam abuses @samp{org-capture} to some extent,
-extending its syntax. To first understand how org-roam's templating
-system works, it may be useful to look into org-capture.
-
-The org-roam capture template extends org-capture's template with 2
-additional properties:
-
-@itemize
-@item
-@samp{:file-name}: This is the file name template used when a new note is
-created. Notes can be placed in sub-directories by prepending them to
-the filename (@samp{sub/file-name})
-
-@item
-@samp{:head}: This is the template that is inserted on initial note
-creation.
-@end itemize
+This requires a complex template insertion system. Fortunately, Org ships with a
+powerful one: @samp{org-capture}. However, org-capture was not designed for such use.
+Org-roam abuses @samp{org-capture}, extending its syntax. To first understand how
+org-roam's templating system works, it may be useful to look into basic usage of
+@samp{org-capture}.
 
 @menu
+* Template Walkthrough::
 * Org-roam Template Expansion::
-* Template examples::
 @end menu
 
-@node Org-roam Template Expansion
-@section Org-roam Template Expansion
+@node Template Walkthrough
+@section Template Walkthrough
 
-Org-roam's template definitions also extend org-capture's template
-syntax, to allow prefilling of strings. In many scenarios,
-@samp{org-roam--capture} is passed a mapping between variables and strings.
-For example, during @samp{org-roam-insert}, a title is prompted for. If the
-title doesn't already exist, we would like to create a new file, without
-prompting for the title again.
-
-Variables passed are expanded with the @samp{$@{var@}} syntax. For example,
-during @samp{org-roam-insert}, @samp{$@{title@}} is prefilled for expansion. Any
-variables that do not contain strings, are prompted for values using
-@samp{completing-read}.
-
-After doing this expansion, the org-capture's template expansion system
-is used to fill up the rest of the template. You may read up more on
-this on @uref{https://orgmode.org/manual/Template-expansion.html#Template-expansion, org-capture's documentation page}.
-
-For example, take the template: @samp{"%<%Y%m%d%H%M%S>-$@{title@}"}, with the
-title @samp{"Foo"}. The template is first expanded into
-@samp{%<%Y%m%d%H%M%S>-Foo}. Then org-capture expands @samp{%<%Y%m%d%H%M%S>} with
-timestamp: e.g. @samp{20200213032037-Foo}.
-
-All of the flexibility afforded by emacs and org-mode are available. For
-example, if you want to encode a UTC timestamp in the filename, you can
-take advantage of org-mode's @samp{%(EXP)} template expansion to call
-@samp{format-time-string} directly to provide its third argument to specify
-UTC@.
-
-@lisp
-("d" "default" plain (function org-roam--capture-get-point)
-     "%?"
-     :file-name "%(format-time-string \"%Y-%m-%d--%H-%M-%SZ--$@{slug@}\" (current-time) t)"
-     :head "#+TITLE: $@{title@}\n"
-     :unnarrowed t)
-@end lisp
-
-Similarly, if you want to change how titles are transformed into slugs,
-you can override @samp{org-roam--title-to-slug}. For example, to use hyphens
-instead of underscores:
-
-@lisp
-(defun org-roam--title-to-slug (title)
-  "Convert TITLE to a filename-suitable slug. Uses hyphens rather than underscores."
-  (cl-flet* ((nonspacing-mark-p (char)
-                                (eq 'Mn (get-char-code-property char 'general-category)))
-             (strip-nonspacing-marks (s)
-                                     (apply #'string (seq-remove #'nonspacing-mark-p
-                                                                 (ucs-normalize-NFD-string s))))
-             (cl-replace (title pair)
-                         (replace-regexp-in-string (car pair) (cdr pair) title)))
-    (let* ((pairs `(("[^[:alnum:][:digit:]]" . "-")  ;; convert anything not alphanumeric
-                    ("--*" . "-")  ;; remove sequential underscores
-                    ("^-" . "")  ;; remove starting underscore
-                    ("-$" . "")))  ;; remove ending underscore
-           (slug (-reduce-from #'cl-replace (strip-nonspacing-marks title) pairs)))
-      (s-downcase slug))))
-@end lisp
-
-This templating system is used throughout org-roam templates.
-
-@node Template examples
-@section Template examples
-
-Here I walkthrough the default template, reproduced below.
+To demonstrate the additions made to org-capture templates. Here, we walkthrough
+the default template, reproduced below.
 
 @lisp
 ("d" "default" plain (function org-roam--capture-get-point)
@@ -522,8 +443,45 @@ file, rather than narrowing to just the entry.
 
 Other options you may want to learn about include @samp{:immediate-finish}.
 
-@node Configuration
-@chapter Configuration
+@node Org-roam Template Expansion
+@section Org-roam Template Expansion
+
+Org-roam's template definitions also extend org-capture's template syntax, to
+allow prefilling of strings. We have seen a glimpse of this in @ref{Template Walkthrough, , Template
+Walkthrough}.
+
+In org-roam templates, the @samp{$@{var@}} syntax allows for the expansion of
+variables, stored in @samp{org-roam-capture--info}. For example, during
+@samp{org-roam-insert}, the user is prompted for a title. Upon entering a
+non-existent title, the @samp{title} key in @samp{org-roam-capture--info} is set to the
+provided title. @samp{$@{title@}} is then expanded into the provided title during the
+org-capture process. Any variables that do not contain strings, are prompted for
+values using @samp{completing-read}.
+
+After doing this expansion, the org-capture's template expansion system
+is used to fill up the rest of the template. You may read up more on
+this on @uref{https://orgmode.org/manual/Template-expansion.html#Template-expansion, org-capture's documentation page}.
+
+To illustrate this dual expansion process, take for example the template string:
+@samp{"%<%Y%m%d%H%M%S>-$@{title@}"}, with the title @samp{"Foo"}. The template is first
+expanded into @samp{%<%Y%m%d%H%M%S>-Foo}. Then org-capture expands @samp{%<%Y%m%d%H%M%S>}
+with timestamp: e.g. @samp{20200213032037-Foo}.
+
+All of the flexibility afforded by Emacs and Org-mode are available. For
+example, if you want to encode a UTC timestamp in the filename, you can take
+advantage of org-mode's @samp{%(EXP)} template expansion to call @samp{format-time-string}
+directly to provide its third argument to specify UTC@.
+
+@lisp
+("d" "default" plain (function org-roam--capture-get-point)
+     "%?"
+     :file-name "%(format-time-string \"%Y-%m-%d--%H-%M-%SZ--$@{slug@}\" (current-time) t)"
+     :head "#+TITLE: $@{title@}\n"
+     :unnarrowed t)
+@end lisp
+
+@node Concepts and Configuration
+@chapter Concepts and Configuration
 
 The number of configuration options is deliberately kept small, to keep
 the Org-roam codebase manageable. However, we attempt to accommodate as
@@ -533,79 +491,69 @@ All of Org-roam's customization options can be viewed via
 @samp{M-x customize-group org-roam}.
 
 @menu
-* Setting the Org-roam Directory::
-* Org-roam Buffer::
+* Directories and Files::
+* The Org-roam Buffer::
 * Org-roam Links::
 * Org-roam Files::
 * Org-roam Graph Viewer::
 * Org-roam Completion System::
 @end menu
 
-@node Setting the Org-roam Directory
-@section Setting the Org-roam Directory
+@node Directories and Files
+@section Directories and Files
 
-Set @samp{org-roam-directory} to the folder containing all your Org files:
+This section concerns the placement and creation of files.
 
-@lisp
-(setq org-roam-directory "/path/to/org/")
-@end lisp
+@defvar org-roam-directory
 
-Every Org file, at any level of nesting, within @samp{/path/to/org/} is
-considered part of the Org-roam ecosystem.
+This is the default path to Org-roam files. All Org files, at any level of
+nesting, are considered part of the Org-roam.
+@end defvar
 
-@menu
-* Having More Than One Org-roam Directory::
-@end menu
+@defvar org-roam-db-location
 
-@node Having More Than One Org-roam Directory
-@subsection Having More Than One Org-roam Directory
+Location of the Org-roam database. If this is non-nil, the Org-roam sqlite
+database is saved here.
 
-Emacs supports directory-local variables, allowing the value of
-@samp{org-roam-directory} to be different in different directories. It does
-this by checking for a file named @samp{.dir-locals.el}.
+It is the user’s responsibility to set this correctly, especially when used
+with multiple Org-roam instances.
+@end defvar
 
-To add support for multiple directories, override the
-@samp{org-roam-directory} variable using directory-local variables. This is
-what @samp{.dir-locals.el} may contain:
+@node The Org-roam Buffer
+@section The Org-roam Buffer
 
-@lisp
-((nil . ((org-roam-directory . "/path/to/here/"))))
-@end lisp
+The Org-roam buffer displays backlinks for the currently active Org-roam note.
 
-All files within that directory will be treated as their own separate
-set of Org-roam files. Remember to run @samp{org-roam-db-build-cache} from a
-file within that directory, at least once.
+@defvar org-roam-buffer
 
-@node Org-roam Buffer
-@section Org-roam Buffer
+The name of the org-roam buffer. Defaults to @samp{*org-roam*}.
+@end defvar
 
-The Org-roam buffer defaults to popping up from the right. You may
-choose to set it to pop up from the left with
-@samp{(setq org-roam-buffer-position 'left)}.
+@defvar org-roam-buffer-position
 
-The Org-roam buffer name can also be renamed:
-e.g. =(setq org-roam-buffer "@strong{my-buffer-name}")=.
+The position of the Org-roam buffer side window. Valid values are @samp{'left},
+@samp{'right}, @samp{'top}, @samp{'bottom}.
+@end defvar
 
-The Org-roam buffer width is adjustable via @samp{org-roam-buffer-width}. The
-value of @samp{org-roam-buffer-width} set as a percentage of the total frame
-width. For example:
+@defvar org-roam-buffer-width
 
-@lisp
-(setq org-roam-buffer-width 0.4)
-@end lisp
+Width of @samp{org-roam-buffer}. Has an effect only if @samp{org-roam-buffer-position} is
+@samp{'left} or @samp{'right}.
+@end defvar
 
-Will result in the Org-roam buffer taking up 40% of the screen width.
+@defvar org-roam-buffer-height
 
-You can change backlinks appearance in the buffer by customizing
-@samp{org-roam-backlink} face (@samp{M-x customize-face org-roam-backlink}).
+Height of @samp{org-roam-buffer}. Has an effect only if @samp{org-roam-buffer-position} is
+@samp{'top} or @samp{'bottom}.
+@end defvar
 
 @node Org-roam Links
 @section Org-roam Links
 
-By default, links are inserted with the title as the link description.
-This can make them hard to distinguish from external links. You may
-choose add special indicators for Org-roam links by tweaking
-@samp{org-roam-link-title-format}, for example:
+By default, links are inserted with the title as the link description. This can
+make them hard to distinguish from external links. You may choose add special
+indicators for Org-roam links by tweaking @samp{org-roam-link-title-format}, for
+example:
 
 @lisp
 (setq org-roam-link-title-format "R:%s")
@@ -1121,6 +1069,32 @@ system that scales well with a large number of files. Other alternatives
 include
 @uref{https://orgmode.org/worg/org-contrib/org-drill.html, org-drill}, and
 @uref{https://github.com/abo-abo/pamparam, pamparam}.
+
+@node FAQ
+@chapter FAQ
+
+@menu
+* How do I have more than one Org-roam directory?::
+@end menu
+
+@node How do I have more than one Org-roam directory?
+@section How do I have more than one Org-roam directory?
+
+Emacs supports directory-local variables, allowing the value of
+@samp{org-roam-directory} to be different in different directories. It does this by
+checking for a file named @samp{.dir-locals.el}.
+
+To add support for multiple directories, override the @samp{org-roam-directory}
+variable using directory-local variables. This is what @samp{.dir-locals.el} may
+contain:
+
+@lisp
+((nil . ((org-roam-directory . "/path/to/here/"))))
+@end lisp
+
+All files within that directory will be treated as their own separate
+set of Org-roam files. Remember to run @samp{org-roam-db-build-cache} from a
+file within that directory, at least once.
 
 Emacs 28.0.50 (Org mode 9.3.6)
 @bye
